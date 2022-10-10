@@ -1,0 +1,11 @@
+const { acquireCategories } = require("../models/model");
+
+
+//controller for api/catagories
+exports.getCategories = (req, res, next) => {
+    acquireCategories().then((categories) => {
+        res.status(200).send({ categories });
+    }).catch((err) => {
+        next(err)
+    })
+};

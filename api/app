@@ -1,0 +1,14 @@
+const express = require("express");
+const app = express();
+const { getCategories } = require('./controllers/controller');
+//app.use(express.json()); I KNOW I DON'T  NEED THIS YET, but i'll forget later
+
+//Simple test that API is functional - used for debug
+/*app.get("/api", (req, res) => {
+    res.status(200).send({ msg: "API is functional" });
+}); */
+
+//returns catagories data
+app.get("/api/categories", getCategories);
+
+module.exports = app;
