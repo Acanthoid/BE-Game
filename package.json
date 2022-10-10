@@ -26,6 +26,8 @@
     "pg": "^8.8.0",
     "pg-format": "^1.0.4",
     "psql": "^0.0.1",
+    "pg": "^8.7.3",
+    "pg-format": "^1.0.4",
     "supertest": "^6.3.0"
   },
   "devDependencies": {
