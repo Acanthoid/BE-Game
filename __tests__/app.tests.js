@@ -87,7 +87,6 @@ describe("get user data from database", () => {
         .get("/api/users")
         .expect(200)
         .then(({body}) => {
-            console.log(body)
         expect(body.users.length).toEqual(4);
         expect(
         body.users.forEach((user) => {
@@ -111,4 +110,71 @@ describe("get user data from database", () => {
     });
 });
 
+//requests alters votes on db and returns altered review
+describe("PATCH specific review to increase votes", () => {
+	test("POST /api/reviews/1 returns data required", () => {
+    const votes = { inc_votes: 10};
+    return request(app)
+        .post("/api/reviews/1")
+        .send(votes)
+        .expect(200)
+        .then(({body}) => {
+            expect(body.length).toEqual(1);
+            expect(body[0]).toEqual(
+                {"category": "euro game",
+                "created_at": "2021-01-18T10:00:20.514Z", 
+                "designer": "Uwe Rosenberg", 
+                "owner": "mallionaire", 
+                "review_body": "Farmyard fun!", 
+                "review_id": 1, 
+                "review_img_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png", 
+                "title": "Agricola", 
+                "votes": 11}
+            );
+        });
+    });
 
+    //bad input
+    test("POST api/reviews/800800  - returns 404 error message when given bad review number", () => {
+    const votes = { inc_votes: 10};
+    return request(app)
+        .post("/api/reviews/800800")
+        .send(votes)
+        .expect(404)
+    });
+
+    //still functions for negative values
+    test("POST /api/reviews/1 returns data required when handed result < 0 ", () => {
+        const votes = { inc_votes: -1000};
+        return request(app)
+            .post("/api/reviews/1")
+            .send(votes)
+            .expect(200)
+            .then(({body}) => {
+                expect(body.length).toEqual(1);
+                expect(body[0]).toEqual(
+                    {"category": "euro game",
+                    "created_at": "2021-01-18T10:00:20.514Z", 
+                    "designer": "Uwe Rosenberg", 
+                    "owner": "mallionaire", 
+                    "review_body": "Farmyard fun!", 
+                    "review_id": 1, 
+                    "review_img_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png", 
+                    "title": "Agricola", 
+                    "votes": -999}
+                );
+            });
+        });
+
+    //returns error message when handed non-number
+    test("POST /api/reviews/1  inc_votes value cannot accept a non number as a value", () => {
+        const votes = { inc_votes: 'I hated this film'};
+        return request(app)
+            .post("/api/reviews/1")
+            .send(votes)
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('Invalid input type')
+            });
+    });
+});

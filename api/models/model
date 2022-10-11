@@ -21,4 +21,13 @@ exports.acquireUsers = () => {
     return db.query(`SELECT * FROM users;`).then(({ rows }) => {
         return rows;
     })
-}
+};
+
+exports.alterVotes = (id, changedVotes) => {
+    return db.query(`UPDATE reviews SET votes = votes + $2 WHERE review_id =$1 RETURNING *;`, [id, changedVotes.inc_votes]).then (( result ) => {
+        if(result.rows.length === 0){
+            return Promise.reject({status: 404, msg: 'Review not found'})
+        }
+        return result.rows;
+    })
+};
