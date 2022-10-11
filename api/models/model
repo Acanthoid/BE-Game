@@ -3,8 +3,17 @@ const db = require("../../db/connection");
 //requests all category data from db and returns it to controller
 exports.acquireCategories = () => {
     let request = `SELECT * FROM categories`;
-    
     return db.query(request).then(({ rows }) => {
         return rows;
     });
+};
+
+//requests and returns data held under review_id
+exports.locateReview = (id) => {
+    return db.query(`SELECT * FROM reviews WHERE review_id = $1;`, [id]).then (( result ) => {
+        if(result.rows.length === 0){
+            return Promise.reject({status: 404, msg: 'Review not found'})
+        }
+        return result.rows[0];
+    })
 };

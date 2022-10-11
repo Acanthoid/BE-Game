@@ -19,7 +19,7 @@ describe("Test basic API function", () => {
 
 //requests 'catagories' from db and checks that descriptions and slugs correspond to expected data
 describe("get categories from database", () => {
-	test("GET api//categories", () => {
+	test("GET api/categories returns data contained in categories", () => {
     return request(app)
         .get("/api/categories")
         .expect(200)
@@ -29,9 +29,56 @@ describe("get categories from database", () => {
         expect(categories).toEqual([{"description": "Abstact games that involve little luck", "slug": "euro game"}, {"description": "Players attempt to uncover each other's hidden role", "slug": "social deduction"}, {"description": "Games involving physical skill", "slug": "dexterity"}, {"description": "Games suitable for children", "slug": "children's games"}]);
         });
     });
+    //error handling
+    test("GET api/Katagoriys  - returns 404 error message when given incorrect spelling", () => {
+    return request(app)
+        .get("/api/Katagoriys")
+        .expect(404)
+    });
 });
 
+//tests that api uses param entered to locate and return a review
+describe("get given review from database", () => {
+	test("GET api/reviews/:review_id", () => {
+    return request(app)
+        .get("/api/reviews/1")
+        .expect(200)
+        .then(body  => {
+        const chosenReview = body._body;
+        expect(chosenReview).toBeInstanceOf(Object);
+        expect(chosenReview).toEqual(
+            {"category": "euro game",
+            "created_at": "2021-01-18T10:00:20.514Z", 
+            "designer": "Uwe Rosenberg", 
+            "owner": "mallionaire", 
+            "review_body": "Farmyard fun!", 
+            "review_id": 1, 
+            "review_img_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png", 
+            "title": "Agricola", 
+            "votes": 1}
+        );
+        });
+    });
+    //review not found
+    test("GET api/reviews/88888  - returns 404 error message when given a bad review number  ", () => {
+        return request(app)
+            .get("/api/reviews/88888")
+            .expect(404)
+            .then(({body}) => {
+                expect(body.msg).toBe('Review not found')
+            })
+    });
 
+    //incorrect input type
+    test("GET api/reviews/thatOneThatIWrote  - returns 400 error message when given incorrect input type  ", () => {
+        return request(app)
+            .get("/api/reviews/thatOneThatIWrote")
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('Invalid input type')
+            })
+    });
+});
 
 
 
