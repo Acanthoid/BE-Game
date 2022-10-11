@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const { getCategories, findReview } = require('./controllers/controller');
 app.use(express.json()); //just let it be!
+const {internalErrorHandling, customErrorHandling, PSQLErrorHandling, } = require('./controllers/error_handling')
 
 //Simple test that API is functional - used for debug
 /*app.get("/api", (req, res) => {
@@ -14,27 +15,10 @@ app.get("/api/categories", getCategories);
 //returns specified review
 app.get("/api/reviews/:review_id", findReview);
 
-//400
-app.use((err, req, res, next) => {
-    if(err.code === '22P02'){
-        res.status(400).send({msg: 'Invalid input type'})
-    }else{
-        next(err);
-    }
-})
+//Errors
+app.use(PSQLErrorHandling)
 
-//404
-app.use((err, req, res, next) => {
-    if(err.status){
-        res.status(err.status).send({msg: err.msg});
-    }else{
-        next(err);
-    }
-});
+app.use(customErrorHandling)
 
-//500
-app.use((err, req, res, next) => {
-    res.status(500).send({msg: 'Internal server error'});
-});
-
+app.use(internalErrorHandling)
 module.exports = app;
