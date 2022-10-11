@@ -80,5 +80,35 @@ describe("get given review from database", () => {
     });
 });
 
+//requests 'users' from db and checks username, name and avatar_url
+describe("get user data from database", () => {
+	test("GET api/users returns data required", () => {
+    return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({body}) => {
+            console.log(body)
+        expect(body.users.length).toEqual(4);
+        expect(
+        body.users.forEach((user) => {
+            expect(user).toEqual(
+            expect.objectContaining({
+                avatar_url: expect.any(String),
+                name: expect.any(String),
+                username: expect.any(String),
+                })
+            );
+        })
+        );
+        });
+    });
+
+    //bad input
+    test("GET api/yousers  - returns 404 error message when given incorrect spelling", () => {
+    return request(app)
+        .get("/api/yousers")
+        .expect(404)
+    });
+});
 
 
