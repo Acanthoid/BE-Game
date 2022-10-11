@@ -1,4 +1,4 @@
-const { acquireCategories, locateReview } = require("../models/model");
+const { acquireCategories, locateReview, acquireUsers} = require("../models/model");
 
 
 //controller for api/catagories
@@ -7,7 +7,7 @@ exports.getCategories = (req, res, next) => {
         res.status(200).send({ categories });
     }).catch((err) => {
         next(err)
-    })
+    });
 };
 
 //controller for reviews by review_id
@@ -16,5 +16,13 @@ exports.findReview = (req, res, next) => {
         res.status(200).send(review);
     }).catch((err) => {
         next(err)
-    })
+    });
+};
+
+exports.getUsers = (req, res, next) => {
+    acquireUsers().then((users) => {
+        res.status(200).send( {users} );
+    }).catch((err) => {
+        next(err)
+    });
 };
