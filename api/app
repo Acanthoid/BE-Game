@@ -18,7 +18,7 @@ app.get("/api/reviews/:review_id", findReview);
 //returns user data
 app.get("/api/users", getUsers)
 
-app.post("/api/reviews/:review_id", changeVotes)
+app.patch("/api/reviews/:review_id", changeVotes)
 
 //Errors
 app.use(PSQLErrorHandling)

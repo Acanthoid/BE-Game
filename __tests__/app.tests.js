@@ -112,10 +112,10 @@ describe("get user data from database", () => {
 
 //requests alters votes on db and returns altered review
 describe("PATCH specific review to increase votes", () => {
-	test("POST /api/reviews/1 returns data required", () => {
+	test("PATCH /api/reviews/1 returns data required", () => {
     const votes = { inc_votes: 10};
     return request(app)
-        .post("/api/reviews/1")
+        .patch("/api/reviews/1")
         .send(votes)
         .expect(200)
         .then(({body}) => {
@@ -135,19 +135,19 @@ describe("PATCH specific review to increase votes", () => {
     });
 
     //bad input
-    test("POST api/reviews/800800  - returns 404 error message when given bad review number", () => {
+    test("PATCH api/reviews/800800  - returns 404 error message when given bad review number", () => {
     const votes = { inc_votes: 10};
     return request(app)
-        .post("/api/reviews/800800")
+        .patch("/api/reviews/800800")
         .send(votes)
         .expect(404)
     });
 
     //still functions for negative values
-    test("POST /api/reviews/1 returns data required when handed result < 0 ", () => {
+    test("PATCH /api/reviews/1 returns data required when handed result < 0 ", () => {
         const votes = { inc_votes: -1000};
         return request(app)
-            .post("/api/reviews/1")
+            .patch("/api/reviews/1")
             .send(votes)
             .expect(200)
             .then(({body}) => {
@@ -167,10 +167,10 @@ describe("PATCH specific review to increase votes", () => {
         });
 
     //returns error message when handed non-number
-    test("POST /api/reviews/1  inc_votes value cannot accept a non number as a value", () => {
+    test("PATCH /api/reviews/1  inc_votes value cannot accept a non number as a value", () => {
         const votes = { inc_votes: 'I hated this film'};
         return request(app)
-            .post("/api/reviews/1")
+            .patch("/api/reviews/1")
             .send(votes)
             .expect(400)
             .then(({body}) => {
