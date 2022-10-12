@@ -26,9 +26,15 @@ describe("get categories from database", () => {
         .then(({ body }) => {
         const { categories } = body;
         expect(categories).toBeInstanceOf(Object);
-        expect(categories).toEqual([{"description": "Abstact games that involve little luck", "slug": "euro game"}, {"description": "Players attempt to uncover each other's hidden role", "slug": "social deduction"}, {"description": "Games involving physical skill", "slug": "dexterity"}, {"description": "Games suitable for children", "slug": "children's games"}]);
+        categories.forEach((restaurant) => {
+            expect(restaurant).toMatchObject({
+                description: expect.any(String),
+                slug: expect.any(String)
+            });
+        });
         });
     });
+
     //error handling
     test("GET api/Katagoriys  - returns 404 error message when given incorrect spelling", () => {
     return request(app)
@@ -38,7 +44,7 @@ describe("get categories from database", () => {
 });
 
 //tests that api uses param entered to locate and return a review
-describe("get given review from database", () => {
+describe("get given review from database with 0 comments", () => {
 	test("GET api/reviews/:review_id", () => {
     return request(app)
         .get("/api/reviews/1")
@@ -55,7 +61,8 @@ describe("get given review from database", () => {
             "review_id": 1, 
             "review_img_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png", 
             "title": "Agricola", 
-            "votes": 1}
+            "votes": 1,
+            "comment_count": 0}
         );
         });
     });
@@ -78,6 +85,29 @@ describe("get given review from database", () => {
                 expect(body.msg).toBe('Invalid input type')
             })
     });
+
+    //retrieve reviews with comment and innumerate <<<
+    test("GET api/reviews/:review_id with comments", () => {
+        return request(app)
+            .get("/api/reviews/3")
+            .expect(200)
+            .then(body  => {
+            const chosenReview = body._body;
+            expect(chosenReview).toBeInstanceOf(Object);
+            expect(chosenReview).toEqual(
+                {"category": "social deduction",
+                "created_at": "2021-01-18T10:01:41.251Z",
+                "designer": "Akihisa Okui",
+                "owner": "bainesface",
+                "review_body": "We couldn't find the werewolf!",
+                "review_id": 3,
+                "review_img_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+                "title": "Ultimate Werewolf",
+                "votes": 5,
+                "comment_count": 3}
+            );
+            });
+        });
 });
 
 //requests 'users' from db and checks username, name and avatar_url

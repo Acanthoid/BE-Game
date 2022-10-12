@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const { getCategories, findReview, getUsers, changeVotes } = require('./controllers/controller');
+const { getCategories, findReviewById, getUsers, changeVotes } = require('./controllers/controller');
 app.use(express.json()); //just let it be!
 const {internalErrorHandling, customErrorHandling, PSQLErrorHandling } = require('./controllers/error_handling')
 
@@ -13,7 +13,7 @@ const {internalErrorHandling, customErrorHandling, PSQLErrorHandling } = require
 app.get("/api/categories", getCategories);
 
 //returns specified review
-app.get("/api/reviews/:review_id", findReview);
+app.get("/api/reviews/:review_id", findReviewById);
 
 //returns user data
 app.get("/api/users", getUsers)

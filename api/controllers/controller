@@ -1,4 +1,4 @@
-const { acquireCategories, locateReview, acquireUsers, alterVotes} = require("../models/model");
+const { acquireCategories, locateReviewById, acquireUsers, alterVotes} = require("../models/model");
 
 
 //controller for api/catagories
@@ -11,8 +11,8 @@ exports.getCategories = (req, res, next) => {
 };
 
 //controller for reviews by review_id
-exports.findReview = (req, res, next) => {
-    locateReview(req.params.review_id).then((review) => {
+exports.findReviewById = (req, res, next) => {
+    locateReviewById(req.params.review_id).then((review) => {
         res.status(200).send(review);
     }).catch((err) => {
         next(err)
