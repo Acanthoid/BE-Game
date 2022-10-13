@@ -1,8 +1,8 @@
 const express = require("express");
 const app = express();
-const { getCategories, findReviewById, getUsers, changeVotes } = require('./controllers/controller');
+const {getCategories, findReviewById, getUsers, changeVotes, getGroupedReviews} = require('./controllers/controller');
 app.use(express.json()); //just let it be!
-const {internalErrorHandling, customErrorHandling, PSQLErrorHandling } = require('./controllers/error_handling')
+const {internalErrorHandling, customErrorHandling, PSQLErrorHandling} = require('./controllers/error_handling')
 
 //Simple test that API is functional - used for debug
 /*app.get("/api", (req, res) => {
@@ -18,6 +18,10 @@ app.get("/api/reviews/:review_id", findReviewById);
 //returns user data
 app.get("/api/users", getUsers)
 
+//returns all reviews from either a single category or all reviews
+app.get("/api/reviews", getGroupedReviews)
+
+//changes votes and returns review with changed votes
 app.patch("/api/reviews/:review_id", changeVotes)
 
 //Errors

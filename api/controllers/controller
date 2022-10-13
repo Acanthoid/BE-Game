@@ -1,36 +1,50 @@
-const { acquireCategories, locateReviewById, acquireUsers, alterVotes} = require("../models/model");
+const {acquireCategories, locateReviewById, acquireUsers, alterVotes, acquireGroupedReviews} = require("../models/model");
 
 
-//controller for api/catagories
+//controller for GET api/catagories
 exports.getCategories = (req, res, next) => {
     acquireCategories().then((categories) => {
-        res.status(200).send({ categories });
+        res.status(200).send({categories});
     }).catch((err) => {
-        next(err)
+        next(err);
     });
 };
 
-//controller for reviews by review_id
+//controller for GET api/reviews/:review_id
 exports.findReviewById = (req, res, next) => {
     locateReviewById(req.params.review_id).then((review) => {
         res.status(200).send(review);
     }).catch((err) => {
-        next(err)
+        next(err);
     });
 };
 
+//controller for GET api/users
 exports.getUsers = (req, res, next) => {
     acquireUsers().then((users) => {
-        res.status(200).send( {users} );
+        res.status(200).send({users});
     }).catch((err) => {
-        next(err)
+        next(err);
     });
 };
 
+//controller for GET api/reviews including query
+exports.getGroupedReviews = (req, res, next) => {
+    acquireGroupedReviews(req.query)
+    .then((reviews) => {
+        res.status(200).send(reviews);
+    })
+    .catch((err) => {
+        console.log(err);
+        next(err);
+    });
+};
+
+//controller for PATCH api/reviews/:review_id
 exports.changeVotes = (req, res, next) => {
     alterVotes(req.params.review_id, req.body).then((review) => {
         res.status(200).send(review);
     }).catch((err) => {
-        next(err)
-    })
-}
+        next(err);
+    });
+};

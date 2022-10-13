@@ -24,20 +24,20 @@ describe("get categories from database", () => {
         .get("/api/categories")
         .expect(200)
         .then(({ body }) => {
-        const { categories } = body;
-        expect(categories).toBeInstanceOf(Object);
-        categories.forEach((restaurant) => {
-            expect(restaurant).toMatchObject({
-                description: expect.any(String),
-                slug: expect.any(String)
+            const { categories } = body;
+            expect(categories).toBeInstanceOf(Object);
+            categories.forEach((category) => {
+                expect(category).toMatchObject({
+                    description: expect.any(String),
+                    slug: expect.any(String)
+                });
             });
-        });
         });
     });
 
     //error handling
     test("GET api/Katagoriys  - returns 404 error message when given incorrect spelling", () => {
-    return request(app)
+        return request(app)
         .get("/api/Katagoriys")
         .expect(404)
     });
@@ -46,52 +46,52 @@ describe("get categories from database", () => {
 //tests that api uses param entered to locate and return a review
 describe("get given review from database with 0 comments", () => {
 	test("GET api/reviews/:review_id", () => {
-    return request(app)
+        return request(app)
         .get("/api/reviews/1")
         .expect(200)
         .then(body  => {
-        const chosenReview = body._body;
-        expect(chosenReview).toBeInstanceOf(Object);
-        expect(chosenReview).toEqual(
-            {"category": "euro game",
-            "created_at": "2021-01-18T10:00:20.514Z", 
-            "designer": "Uwe Rosenberg", 
-            "owner": "mallionaire", 
-            "review_body": "Farmyard fun!", 
-            "review_id": 1, 
-            "review_img_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png", 
-            "title": "Agricola", 
-            "votes": 1,
-            "comment_count": 0}
-        );
+            const chosenReview = body._body;
+            expect(chosenReview).toBeInstanceOf(Object);
+            expect(chosenReview).toEqual(
+                {"category": "euro game",
+                "created_at": "2021-01-18T10:00:20.514Z", 
+                "designer": "Uwe Rosenberg", 
+                "owner": "mallionaire", 
+                "review_body": "Farmyard fun!", 
+                "review_id": 1, 
+                "review_img_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png", 
+                "title": "Agricola", 
+                "votes": 1,
+                "comment_count": 0}
+            );
         });
     });
     //review not found
     test("GET api/reviews/88888  - returns 404 error message when given a bad review number  ", () => {
         return request(app)
-            .get("/api/reviews/88888")
-            .expect(404)
-            .then(({body}) => {
-                expect(body.msg).toBe('Review not found')
-            })
+        .get("/api/reviews/88888")
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Review not found')
+        })
     });
 
     //incorrect input type
     test("GET api/reviews/thatOneThatIWrote  - returns 400 error message when given incorrect input type  ", () => {
         return request(app)
-            .get("/api/reviews/thatOneThatIWrote")
-            .expect(400)
-            .then(({body}) => {
-                expect(body.msg).toBe('Invalid input type')
-            })
+        .get("/api/reviews/thatOneThatIWrote")
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid input type')
+        })
     });
 
     //retrieve reviews with comment and innumerate <<<
     test("GET api/reviews/:review_id with comments", () => {
         return request(app)
-            .get("/api/reviews/3")
-            .expect(200)
-            .then(body  => {
+        .get("/api/reviews/3")
+        .expect(200)
+        .then(body  => {
             const chosenReview = body._body;
             expect(chosenReview).toBeInstanceOf(Object);
             expect(chosenReview).toEqual(
@@ -106,35 +106,35 @@ describe("get given review from database with 0 comments", () => {
                 "votes": 5,
                 "comment_count": 3}
             );
-            });
         });
+    });
 });
 
 //requests 'users' from db and checks username, name and avatar_url
 describe("get user data from database", () => {
 	test("GET api/users returns data required", () => {
-    return request(app)
+        return request(app)
         .get("/api/users")
         .expect(200)
         .then(({body}) => {
-        expect(body.users.length).toEqual(4);
-        expect(
-        body.users.forEach((user) => {
-            expect(user).toEqual(
-            expect.objectContaining({
-                avatar_url: expect.any(String),
-                name: expect.any(String),
-                username: expect.any(String),
+            expect(body.users.length).toEqual(4);
+            expect(
+                body.users.forEach((user) => {
+                    expect(user).toEqual(
+                        expect.objectContaining({
+                            avatar_url: expect.any(String),
+                            name: expect.any(String),
+                            username: expect.any(String),
+                        })
+                    );
                 })
             );
-        })
-        );
         });
     });
 
     //bad input
     test("GET api/yousers  - returns 404 error message when given incorrect spelling", () => {
-    return request(app)
+        return request(app)
         .get("/api/yousers")
         .expect(404)
     });
@@ -166,8 +166,8 @@ describe("PATCH specific review to increase votes", () => {
 
     //bad input
     test("PATCH api/reviews/800800  - returns 404 error message when given bad review number", () => {
-    const votes = { inc_votes: 10};
-    return request(app)
+        const votes = { inc_votes: 10};
+        return request(app)
         .patch("/api/reviews/800800")
         .send(votes)
         .expect(404)
@@ -177,34 +177,92 @@ describe("PATCH specific review to increase votes", () => {
     test("PATCH /api/reviews/1 returns data required when handed result < 0 ", () => {
         const votes = { inc_votes: -1000};
         return request(app)
-            .patch("/api/reviews/1")
-            .send(votes)
-            .expect(200)
-            .then(({body}) => {
-                expect(body.length).toEqual(1);
-                expect(body[0]).toEqual(
-                    {"category": "euro game",
-                    "created_at": "2021-01-18T10:00:20.514Z", 
-                    "designer": "Uwe Rosenberg", 
-                    "owner": "mallionaire", 
-                    "review_body": "Farmyard fun!", 
-                    "review_id": 1, 
-                    "review_img_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png", 
-                    "title": "Agricola", 
-                    "votes": -999}
-                );
-            });
+        .patch("/api/reviews/1")
+        .send(votes)
+        .expect(200)
+        .then(({body}) => {
+            expect(body.length).toEqual(1);
+            expect(body[0]).toEqual(
+                {"category": "euro game",
+                "created_at": "2021-01-18T10:00:20.514Z", 
+                "designer": "Uwe Rosenberg", 
+                "owner": "mallionaire", 
+                "review_body": "Farmyard fun!", 
+                "review_id": 1, 
+                "review_img_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png", 
+                "title": "Agricola", 
+                "votes": -999}
+            );
         });
+    });
 
     //returns error message when handed non-number
     test("PATCH /api/reviews/1  inc_votes value cannot accept a non number as a value", () => {
         const votes = { inc_votes: 'I hated this film'};
         return request(app)
-            .patch("/api/reviews/1")
-            .send(votes)
-            .expect(400)
-            .then(({body}) => {
-                expect(body.msg).toBe('Invalid input type')
-            });
+        .patch("/api/reviews/1")
+        .send(votes)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid input type')
+        });
     });
+});
+
+//tests that api uses query to locate and return a set of reviews
+describe("get all reviews from a requested category or default to all reviews total", () => {
+	test("GET api/reviews returns all reviews", () => {
+        return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({body})  => {
+            expect(body.length).toBe(13)
+            body.forEach((review) => {
+                expect(review).toMatchObject({
+                    "category": expect.any(String),
+                    "created_at": expect.any(String), 
+                    "designer": expect.any(String), 
+                    "owner": expect.any(String), 
+                    "review_body": expect.any(String), 
+                    "review_id": expect.any(Number), 
+                    "review_img_url": expect.any(String), 
+                    "title": expect.any(String), 
+                    "votes": expect.any(Number),
+                    "comment_count": expect.any(Number)
+                });
+            });
+        });
+    });
+
+    test("GET api/reviews returns all reviews in query category", () => {
+        return request(app)
+        .get("/api/reviews/?category=social deduction")
+        .expect(200)
+        .then(({body})  => {
+            expect(body.length).toBe(11)
+            body.forEach((review) => {
+                expect(review).toMatchObject({
+                    "category": expect.any(String),
+                    "created_at": expect.any(String), 
+                    "designer": expect.any(String), 
+                    "owner": expect.any(String), 
+                    "review_body": expect.any(String), 
+                    "review_id": expect.any(Number), 
+                    "review_img_url": expect.any(String), 
+                    "title": expect.any(String), 
+                    "votes": expect.any(Number),
+                    "comment_count": expect.any(Number)
+                });
+            });
+        });
+    });
+
+    test("PATCH api/reviews?category=800800whoop  - returns 404 error message when given bad review number", () => {
+        const votes = { inc_votes: 10};
+        return request(app)
+        .patch("/api/reviews/800800?category=800800whoop ")
+        .send(votes)
+        .expect(404)
+    });
+
 });
