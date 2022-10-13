@@ -329,7 +329,7 @@ describe("post new comment into comments and return the posted comment", () => {
         });
     }); 
 
-    test.only("GET api/reviews/892928/comments creates and returns 400 for bad review number", () => {
+    test("GET api/reviews/892928/comments creates and returns 400 for bad review number", () => {
         const bodyIn = {username: "dav3rid", body: `On the whole I found the review 
         to be enjoyable while reading with my police officer friends under an assumed 
         identity. Could have used more low effort references to Seth Rogan coming of 
