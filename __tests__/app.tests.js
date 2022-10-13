@@ -287,7 +287,6 @@ describe("get all comments from review  or default to all reviews total", () => 
         });
     });
 
-
     test("GET api/reviews/1/comments returns 404 as it has no reviews", () => {
         return request(app)
         .get("/api/reviews/1/comments")
@@ -305,4 +304,39 @@ describe("get all comments from review  or default to all reviews total", () => 
         expect(body.msg).toBe('Invalid input type')
         });
     });
+});
+
+describe("post new comment into comments and return the posted comment", () => {
+	test("GET api/reviews/2/comments creates and returns new comment", () => {
+        const bodyIn = {username: "dav3rid", body: `On the whole I found the review 
+        to be enjoyable while reading with my police officer friends under an assumed 
+        identity. Could have used more low effort references to Seth Rogan coming of 
+        age comedies.`};
+        return request(app)
+        .post("/api/reviews/2/comments")
+        .send(bodyIn)
+        .expect(201)
+        .then(({body})  => {
+            expect(body.length).toBe(1)
+            expect(body[0]).toMatchObject({
+                "created_at": expect.any(String), 
+                "author": expect.any(String), 
+                "review_id": expect.any(Number),
+                "body": expect.any(String), 
+                "votes": expect.any(Number),
+                "comment_id": expect.any(Number)
+            });
+        });
+    }); 
+
+    test("GET api/reviews/892928/comments creates and returns 400 for bad review number", () => {
+        const bodyIn = {username: "dav3rid", body: `On the whole I found the review 
+        to be enjoyable while reading with my police officer friends under an assumed 
+        identity. Could have used more low effort references to Seth Rogan coming of 
+        age comedies.`};
+        return request(app)
+        .post("/api/reviews/892928/comments")
+        .send(bodyIn)
+        .expect(400)
+    }); 
 });
