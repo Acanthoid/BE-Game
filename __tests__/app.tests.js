@@ -293,7 +293,7 @@ describe("get all comments from review  or default to all reviews total", () => 
         .get("/api/reviews/1/comments")
         .expect(404)
         .then(({body})  => {
-        expect(body.msg).toBe('There are no reviews for review_id:1')
+            expect(body.msg).toBe('There are no reviews for review_id:1')
         });
     });
 
@@ -302,7 +302,7 @@ describe("get all comments from review  or default to all reviews total", () => 
         .get("/api/reviews/IWONTTHECOMMENTSOVDATFILM/comments")
         .expect(400)
         .then(({body})  => {
-        expect(body.msg).toBe('Invalid input type')
+            expect(body.msg).toBe('Invalid input type')
         });
     });
 });
