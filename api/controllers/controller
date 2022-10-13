@@ -1,4 +1,4 @@
-const {acquireCategories, locateReviewById, acquireUsers, alterVotes, acquireGroupedReviews} = require("../models/model");
+const {acquireCategories, locateReviewById, acquireUsers, alterVotes, acquireGroupedReviews, acquireCommentsByReviewId} = require("../models/model");
 
 
 //controller for GET api/catagories
@@ -39,6 +39,17 @@ exports.getGroupedReviews = (req, res, next) => {
         next(err);
     });
 };
+
+exports.getCommentsByReviewId = (req, res, next) => {
+    const id = req.params.review_id;
+    acquireCommentsByReviewId(id)
+    .then((review) => {
+        res.status(200).send(review);
+    })
+    .catch((err) => {
+        next(err);
+    })
+}
 
 //controller for PATCH api/reviews/:review_id
 exports.changeVotes = (req, res, next) => {
