@@ -50,6 +50,19 @@ exports.acquireGroupedReviews = (category, sortBy = "created_at", order = "DESC"
     });
 };
 
+exports.acquireCommentsByReviewId = (id) => {
+    return db
+    .query(`SELECT * FROM comments WHERE comments.review_id = $1 ORDER BY created_at ASC`, [id]).then(({ rows }) => {
+        const comments = rows;
+        if (!comments[0]) {
+            return Promise.reject({status: 404, msg: `There are no reviews for review_id:${id}`,
+            });
+        } 
+        return comments;
+
+    });
+}
+
 exports.alterVotes = (id, changedVotes) => {
     return db.query(`UPDATE reviews SET votes = votes + $2 WHERE review_id =$1 RETURNING *;`, [id, changedVotes.inc_votes]).then ((result) => {
         if(result.rows.length === 0){

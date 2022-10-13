@@ -264,5 +264,45 @@ describe("get all reviews from a requested category or default to all reviews to
         .send(votes)
         .expect(404)
     });
+});
 
+//tests that api returns all comments for review_id
+describe("get all comments from review  or default to all reviews total", () => {
+	test("GET api/reviews/3/comments returns all comments for review_id-3", () => {
+        return request(app)
+        .get("/api/reviews/3/comments")
+        .expect(200)
+        .then(({body})  => {
+            expect(body.length).toBe(3)
+            body.forEach((review) => {
+                expect(review).toMatchObject({
+                    "created_at": expect.any(String), 
+                    "author": expect.any(String), 
+                    "review_id": expect.any(Number),
+                    "body": expect.any(String), 
+                    "votes": expect.any(Number),
+                    "comment_id": expect.any(Number)
+                });
+            });
+        });
+    });
+
+
+    test("GET api/reviews/1/comments returns 404 as it has no reviews", () => {
+        return request(app)
+        .get("/api/reviews/1/comments")
+        .expect(404)
+        .then(({body})  => {
+        expect(body.msg).toBe('There are no reviews for review_id:1')
+        });
+    });
+
+    test("GET api/reviews/IWONTTHECOMMENTSOVDATFILM/comments returns 400", () => {
+        return request(app)
+        .get("/api/reviews/IWONTTHECOMMENTSOVDATFILM/comments")
+        .expect(400)
+        .then(({body})  => {
+        expect(body.msg).toBe('Invalid input type')
+        });
+    });
 });
