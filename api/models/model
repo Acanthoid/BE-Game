@@ -2,17 +2,18 @@ const db = require("../../db/connection");
 
 //requests all category data from db and returns it to controller
 exports.acquireCategories = () => {
-    return db.query(`SELECT * FROM categories;`).then(({ rows }) => {
+    return db.query(`SELECT * FROM categories;`).then(({rows}) => {
         return rows;
     });
 };
 
+//SELECT reviews.*, COUNT(comments.review_id) :: INT AS comment_count FROM reviews LEFT JOIN 
+   // comments ON comments.review_id = reviews.review_id GROUP BY reviews.review_id;
+
 //requests and returns data held under review_id 
 exports.locateReviewById = (id) => {
-    console.log(id)
     return db.query(`SELECT reviews.*, COUNT(comments.review_id) :: INT AS comment_count FROM reviews LEFT JOIN 
-    comments ON comments.review_id = reviews.review_id WHERE reviews.review_id = $1 GROUP BY reviews.review_id;`, [id]).then (( result ) => {
-        console.log(result.rows, 'result');
+    comments ON comments.review_id = reviews.review_id WHERE reviews.review_id = $1 GROUP BY reviews.review_id;`, [id]).then ((result) => {
         if(result.rows.length === 0){
             return Promise.reject({status: 404, msg: 'Review not found'})
         }
@@ -21,13 +22,36 @@ exports.locateReviewById = (id) => {
 };
 
 exports.acquireUsers = () => {
-    return db.query(`SELECT * FROM users;`).then(({ rows }) => {
+    return db.query(`SELECT * FROM users;`).then(({rows}) => {
         return rows;
-    })
+    });
+};
+
+
+//groups of review
+exports.acquireGroupedReviews = (category, sortBy = "created_at", order = "DESC") => {
+    let initialQuery = `SELECT reviews.*, COUNT(comments.review_id) ::INT AS comment_count 
+    FROM reviews
+    LEFT JOIN comments ON comments.review_id = reviews.review_id`;
+        let query = [];
+        if (category.category != undefined) {
+            query.push(category.category);
+            initialQuery += ` WHERE category = $1`;
+        }
+        initialQuery += `
+        GROUP BY reviews.review_id
+        ORDER BY ${sortBy} ${order};`;
+        return db.query(initialQuery, query).then(({rows}) => {
+            if(rows.length === 0){
+                return Promise.reject({status: 404, msg: 'Review not found'})
+            };
+            return rows;
+            
+    });
 };
 
 exports.alterVotes = (id, changedVotes) => {
-    return db.query(`UPDATE reviews SET votes = votes + $2 WHERE review_id =$1 RETURNING *;`, [id, changedVotes.inc_votes]).then (( result ) => {
+    return db.query(`UPDATE reviews SET votes = votes + $2 WHERE review_id =$1 RETURNING *;`, [id, changedVotes.inc_votes]).then ((result) => {
         if(result.rows.length === 0){
             return Promise.reject({status: 404, msg: 'Review not found'})
         }
