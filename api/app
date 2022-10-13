@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const {getCategories, findReviewById, getUsers, changeVotes, getGroupedReviews, getCommentsByReviewId} = require('./controllers/controller');
+const {getCategories, findReviewById, getUsers, changeVotes, getGroupedReviews, getCommentsByReviewId, postCommentByReviewId} = require('./controllers/controller');
 app.use(express.json()); //just let it be!
 const {internalErrorHandling, customErrorHandling, PSQLErrorHandling} = require('./controllers/error_handling')
 
@@ -23,6 +23,9 @@ app.get("/api/reviews", getGroupedReviews)
 
 //returns all comments related to review_id
 app.get("/api/reviews/:review_id/comments", getCommentsByReviewId)
+
+//adds comment to db and returns the comment
+app.post("/api/reviews/:review_id/comments", postCommentByReviewId)
 
 //changes votes and returns review with changed votes
 app.patch("/api/reviews/:review_id", changeVotes)

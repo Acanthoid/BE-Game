@@ -1,4 +1,5 @@
 const db = require("../../db/connection");
+const { commentData } = require("../../db/data/test-data");
 
 //requests all category data from db and returns it to controller
 exports.acquireCategories = () => {
@@ -61,7 +62,19 @@ exports.acquireCommentsByReviewId = (id) => {
         return comments;
 
     });
-}
+};
+
+exports.addCommentByReviewId = (id, commentPackage) => {
+    const body = commentPackage.body;
+    const author = commentPackage.username;
+    return db.query(`INSERT INTO comments (body, author, review_id) VALUES ($1, $2, $3) RETURNING *;`, [body, author, id]).then((review) => {
+        console.log(review.rows[0], 'rows')
+        if(!review.rows[0]){
+            return Promise.reject({status: 404, msg: 'Review not found'})
+        }
+        return review.rows;
+    });
+};
 
 exports.alterVotes = (id, changedVotes) => {
     return db.query(`UPDATE reviews SET votes = votes + $2 WHERE review_id =$1 RETURNING *;`, [id, changedVotes.inc_votes]).then ((result) => {
@@ -69,5 +82,5 @@ exports.alterVotes = (id, changedVotes) => {
             return Promise.reject({status: 404, msg: 'Review not found'})
         }
         return result.rows;
-    })
+    });
 };
