@@ -337,6 +337,60 @@ describe("post new comment into comments and return the posted comment", () => {
         return request(app)
         .post("/api/reviews/892928/comments")
         .send(bodyIn)
-        .expect(400)
+        .expect(404)
     }); 
+});
+
+describe("get all reviews using queries to sort", () => {
+    test("GET api/reviews returns all reviews sorted by query group in ascending order", () => {
+        return request(app)
+        .get("/api/reviews/?sort=votes&&order=ASC")
+        .expect(200)
+        .then(({body})  => {
+            expect(body.length).toBe(13);
+            expect(body[0].votes).toBe(1);
+            expect(body[12].votes).toBe(100);
+            expect(body[9].votes).toBe(10);
+            body.forEach((review) => {
+                expect(review).toMatchObject({
+                    "category": expect.any(String),
+                    "created_at": expect.any(String), 
+                    "designer": expect.any(String), 
+                    "owner": expect.any(String), 
+                    "review_body": expect.any(String), 
+                    "review_id": expect.any(Number), 
+                    "review_img_url": expect.any(String), 
+                    "title": expect.any(String), 
+                    "votes": expect.any(Number),
+                    "comment_count": expect.any(Number)
+                });
+            });
+        });
+    });
+
+    test.only("GET api/reviews returns all reviews sorted by query group in descending order", () => {
+        return request(app)
+        .get("/api/reviews/?sort=votes&&order=DESC")
+        .expect(200)
+        .then(({body})  => {
+            expect(body.length).toBe(13);
+            expect(body[0].votes).toBe(100);
+            expect(body[12].votes).toBe(1);
+            expect(body[9].votes).toBe(5);
+            body.forEach((review) => {
+                expect(review).toMatchObject({
+                    "category": expect.any(String),
+                    "created_at": expect.any(String), 
+                    "designer": expect.any(String), 
+                    "owner": expect.any(String), 
+                    "review_body": expect.any(String), 
+                    "review_id": expect.any(Number), 
+                    "review_img_url": expect.any(String), 
+                    "title": expect.any(String), 
+                    "votes": expect.any(Number),
+                    "comment_count": expect.any(Number)
+                });
+            });
+        });
+    });
 });

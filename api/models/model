@@ -30,7 +30,10 @@ exports.acquireUsers = () => {
 
 
 //groups of review
-exports.acquireGroupedReviews = (category, sortBy = "created_at", order = "DESC") => {
+//exports.acquireGroupedReviews = (category, sortBy = "created_at", order = "DESC") => {
+exports.acquireGroupedReviews = (category) => {
+    const sortBy = category.sort;
+    const order = category.order;
     let initialQuery = `SELECT reviews.*, COUNT(comments.review_id) ::INT AS comment_count 
     FROM reviews
     LEFT JOIN comments ON comments.review_id = reviews.review_id`;
@@ -39,15 +42,22 @@ exports.acquireGroupedReviews = (category, sortBy = "created_at", order = "DESC"
             query.push(category.category);
             initialQuery += ` WHERE category = $1`;
         }
-        initialQuery += `
-        GROUP BY reviews.review_id
-        ORDER BY ${sortBy} ${order};`;
+        initialQuery += ` GROUP BY reviews.review_id`
+        if (sortBy != undefined) {
+            initialQuery += ` ORDER BY ${sortBy}`;
+        } else {
+            initialQuery += ` ORDER BY created_at`;
+        }
+        if (order != undefined) {
+            initialQuery += ` ${order};`;
+        } else {
+            initialQuery += ` DESC;`
+        }
         return db.query(initialQuery, query).then(({rows}) => {
             if(rows.length === 0){
                 return Promise.reject({status: 404, msg: 'Review not found'})
             };
             return rows;
-            
     });
 };
 
@@ -68,7 +78,6 @@ exports.addCommentByReviewId = (id, commentPackage) => {
     const body = commentPackage.body;
     const author = commentPackage.username;
     return db.query(`INSERT INTO comments (body, author, review_id) VALUES ($1, $2, $3) RETURNING *;`, [body, author, id]).then((review) => {
-        console.log(review.rows[0], 'rows')
         if(!review.rows[0]){
             return Promise.reject({status: 404, msg: 'Review not found'})
         }
