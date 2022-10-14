@@ -28,18 +28,18 @@ exports.getUsers = (req, res, next) => {
     });
 };
 
-//controller for GET api/reviews including query
+//controller for GET api/reviews
 exports.getGroupedReviews = (req, res, next) => {
     acquireGroupedReviews(req.query)
     .then((reviews) => {
         res.status(200).send(reviews);
     })
     .catch((err) => {
-        console.log(err);
         next(err);
     });
 };
 
+//controller for Get api/reviews/:review_id/comments
 exports.getCommentsByReviewId = (req, res, next) => {
     const id = req.params.review_id;
     acquireCommentsByReviewId(id)
@@ -51,6 +51,7 @@ exports.getCommentsByReviewId = (req, res, next) => {
     })
 }
 
+//controller for api/reviews/:review_id/comments
 exports.postCommentByReviewId = (req, res, next) => {
     const id = req.params.review_id;
     addCommentByReviewId(id, req.body)
