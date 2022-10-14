@@ -6,17 +6,17 @@ const { get } = require("../api/app");
 
 beforeEach(() => seed(testData));
 
-
-/* USED TO TEST api, KEEP FOR NOW
+//returns endpoints.json in its entirety
 describe("Test basic API function", () => {
 	test("Test the status 200 and message GET /api", () => {
 		return request(app)
 			.get("/api")
 			.expect(200)
 			.then((res) => {
-			expect(JSON.parse(res.text)).toEqual({ msg: "API is functional" });
+			expect(JSON.parse(res.text).welcome).toEqual({ msg: "API is functional" });
 			});
-	});*/
+	});
+});
 
 //requests 'catagories' from db and checks that descriptions and slugs correspond to expected data
 describe("get categories from database", () => {

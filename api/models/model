@@ -1,5 +1,7 @@
 const db = require("../../db/connection");
 
+
+
 //requests all category data from db and returns it to controller
 exports.acquireCategories = () => {
     return db.query(`SELECT * FROM categories;`).then(({rows}) => {
