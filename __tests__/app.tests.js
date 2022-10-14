@@ -440,7 +440,7 @@ describe("delete requested comment using its id and respond with 204", () => {
         })
     });
 
-    test("DELETE api/comments/anyIDontLike returns 400 - ivalid input type)", () => {
+    test("DELETE api/comments/anyIDontLike returns 400 - in valid input type)", () => {
         return request(app)
         .delete("/api/comments/anyIDontLike")
         .expect(400)
