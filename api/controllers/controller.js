@@ -1,4 +1,4 @@
-const {acquireCategories, locateReviewById, acquireUsers, alterVotes, acquireGroupedReviews, acquireCommentsByReviewId, addCommentByReviewId, removeComment} = require("../models/model");
+const {acquireCategories, locateReviewById, acquireUsers, alterVotes, acquireGroupedReviews, acquireCommentsByReviewId, addCommentByReviewId, removeComment} = require("../models/model.js");
 const endpoints = require("../../endpoints.json");
 
 //controller for GET API

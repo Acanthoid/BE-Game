@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const {getCategories, findReviewById, getUsers, changeVotes, getGroupedReviews, getCommentsByReviewId, postCommentByReviewId, deleteComment, getEndpoints} = require('./controllers/controller');
 app.use(express.json()); 
-const {internalErrorHandling, customErrorHandling, PSQLErrorHandling} = require('./controllers/error_handling')
+const {internalErrorHandling, customErrorHandling, PSQLErrorHandling} = require('./api/controllers/error_handling')
 
 //Returns endpoints.json OR WILL
 app.get("/api", getEndpoints);
