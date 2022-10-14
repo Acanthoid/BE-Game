@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const {getCategories, findReviewById, getUsers, changeVotes, getGroupedReviews, getCommentsByReviewId, postCommentByReviewId, deleteComment, getEndpoints} = require('./controllers/controller');
+const {getCategories, findReviewById, getUsers, changeVotes, getGroupedReviews, getCommentsByReviewId, postCommentByReviewId, deleteComment, getEndpoints} = require('./api/controllers/controller');
 app.use(express.json()); 
 const {internalErrorHandling, customErrorHandling, PSQLErrorHandling} = require('./api/controllers/error_handling')
 
