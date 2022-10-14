@@ -2,6 +2,7 @@ const request = require("supertest");
 const app = require("../api/app");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data");
+const { get } = require("../api/app");
 
 beforeEach(() => seed(testData));
 
@@ -418,6 +419,33 @@ describe("get all reviews using queries to sort", () => {
         .expect(404)
         .then(({body}) => {
             expect(body.msg).toBe('Review not found')
+        })
+    });
+});
+
+//tests that api deletes comment when requested
+describe("delete requested comment using its id and respond with 204", () => {
+	test("DELETE api/comments/3 sends back 204 (will only return if controller matches comment id to deleted comment)", () => {
+        return request(app)
+        .delete("/api/comments/3")
+        .expect(204)
+    });
+
+    test("DELETE api/comments/9999999 returns comment not found)", () => {
+        return request(app)
+        .delete("/api/comments/9999999")
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Comment not found')
+        })
+    });
+
+    test("DELETE api/comments/anyIDontLike returns 400 - in valid input type)", () => {
+        return request(app)
+        .delete("/api/comments/anyIDontLike")
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid input type')
         })
     });
 });

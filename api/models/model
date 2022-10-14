@@ -1,5 +1,4 @@
 const db = require("../../db/connection");
-const { commentData } = require("../../db/data/test-data");
 
 //requests all category data from db and returns it to controller
 exports.acquireCategories = () => {
@@ -96,3 +95,14 @@ exports.alterVotes = (id, changedVotes) => {
         return result.rows;
     });
 };
+
+//delete comment using comment_id
+exports.removeComment = (id) => {
+    return db.query(`DELETE FROM comments WHERE comment_id = $1 RETURNING*;`, [id]).then ((out) => {
+        if(out.rows.length > 0) {
+            const deleted = out.rows[0].comment_id;
+            return deleted;
+        }
+        return Promise.reject({status: 404, msg: 'Comment not found'})
+    })
+}
