@@ -8,9 +8,6 @@ exports.acquireCategories = () => {
     });
 };
 
-//SELECT reviews.*, COUNT(comments.review_id) :: INT AS comment_count FROM reviews LEFT JOIN 
-   // comments ON comments.review_id = reviews.review_id GROUP BY reviews.review_id;
-
 //requests and returns data held under review_id 
 exports.locateReviewById = (id) => {
     return db.query(`SELECT reviews.*, COUNT(comments.review_id) :: INT AS comment_count FROM reviews LEFT JOIN 
@@ -22,6 +19,7 @@ exports.locateReviewById = (id) => {
     });
 };
 
+//all users data
 exports.acquireUsers = () => {
     return db.query(`SELECT * FROM users;`).then(({rows}) => {
         return rows;
@@ -29,26 +27,28 @@ exports.acquireUsers = () => {
 };
 
 
-//groups of review
-//exports.acquireGroupedReviews = (category, sortBy = "created_at", order = "DESC") => {
+//groups of review and query / automatic sorting
 exports.acquireGroupedReviews = (category) => {
     const sortBy = category.sort;
     const order = category.order;
+    if(order !== undefined && order !== 'DESC' && order !== 'ASC'){
+        return Promise.reject({status: 400, msg: 'invalid input- Please choose either "ASC" or "DESC"'})
+    }
     let initialQuery = `SELECT reviews.*, COUNT(comments.review_id) ::INT AS comment_count 
     FROM reviews
     LEFT JOIN comments ON comments.review_id = reviews.review_id`;
         let query = [];
-        if (category.category != undefined) {
+        if (category.category !== undefined) {
             query.push(category.category);
             initialQuery += ` WHERE category = $1`;
         }
         initialQuery += ` GROUP BY reviews.review_id`
-        if (sortBy != undefined) {
+        if (sortBy !== undefined) {
             initialQuery += ` ORDER BY ${sortBy}`;
         } else {
             initialQuery += ` ORDER BY created_at`;
         }
-        if (order != undefined) {
+        if (order !== undefined) {
             initialQuery += ` ${order};`;
         } else {
             initialQuery += ` DESC;`
@@ -61,6 +61,7 @@ exports.acquireGroupedReviews = (category) => {
     });
 };
 
+//all comments linked to review_id
 exports.acquireCommentsByReviewId = (id) => {
     return db
     .query(`SELECT * FROM comments WHERE comments.review_id = $1 ORDER BY created_at ASC`, [id]).then(({ rows }) => {
@@ -74,6 +75,7 @@ exports.acquireCommentsByReviewId = (id) => {
     });
 };
 
+//adds a comment for a specific review_id
 exports.addCommentByReviewId = (id, commentPackage) => {
     const body = commentPackage.body;
     const author = commentPackage.username;
@@ -85,6 +87,7 @@ exports.addCommentByReviewId = (id, commentPackage) => {
     });
 };
 
+//changes the votes by entered amount
 exports.alterVotes = (id, changedVotes) => {
     return db.query(`UPDATE reviews SET votes = votes + $2 WHERE review_id =$1 RETURNING *;`, [id, changedVotes.inc_votes]).then ((result) => {
         if(result.rows.length === 0){

@@ -31,9 +31,12 @@ app.post("/api/reviews/:review_id/comments", postCommentByReviewId)
 app.patch("/api/reviews/:review_id", changeVotes)
 
 //Errors
+//errors for specific PSQL codes
 app.use(PSQLErrorHandling)
 
+//errors that are defined in code
 app.use(customErrorHandling)
 
+//catch all for code/server failure
 app.use(internalErrorHandling)
 module.exports = app;
