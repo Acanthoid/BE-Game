@@ -72,10 +72,11 @@ exports.changeVotes = (req, res, next) => {
     });
 };
 
+//controller for delete comment
 exports.deleteComment = (req, res, next) => {
     const comment_id = req.params.comment_id;
-    removeComment(comment_id).then((body) => {
-        if(body == comment_id){
+    removeComment(comment_id).then((returnedId) => {
+        if(returnedId == comment_id){
             res.status(204).send();
         }
     }).catch((err) => {
