@@ -1,5 +1,6 @@
 {
-  "GET /api": {
+  "welcome": { "msg": "API is functional" },
+  "GET_/api": {
     "description": "serves up a json representation of all the available endpoints of the api"
   },
   "GET /api/categories": {
@@ -14,7 +15,7 @@
       ]
     }
   },
-  "GET /api/reviews": {
+  "GET /api/reviews/": {
     "description": "serves an array of all reviews",
     "queries": ["category", "sort_by", "order"],
     "exampleResponse": {
@@ -30,5 +31,94 @@
         }
       ]
     }
+  },
+  "GET /api/reviews/:review_id": {
+    "description": "serves a review that corresponds to review_id",
+    "queries": [],
+    "exampleResponse": {
+      "reviews": [
+        {
+          "title": "One Night Ultimate Werewolf",
+          "designer": "Akihisa Okui",
+          "owner": "happyamy2016",
+          "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+          "category": "hidden-roles",
+          "created_at": 1610964101251,
+          "votes": 5
+        }
+      ]
+    }
+  },
+  "PATCH /api/reviews/:review_id": {
+    "description": "takes a given number of votes and adds them to an existing review, identified by review_id then serves the review that corresponds to review_id",
+    "queries": [],
+    "exampleResponse": {
+      "reviews": [
+        {
+          "title": "One Night Ultimate Werewolf",
+          "designer": "Akihisa Okui",
+          "owner": "happyamy2016",
+          "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+          "category": "hidden-roles",
+          "created_at": 1610964101251,
+          "votes": 15
+        }
+      ]
+    }
+  },
+  "GET /api/reviews/:review_id/comments": {
+    "description": "serves all comments that are associated with the review that corresponds to review_id",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "body": "My dog loved this game too!",
+          "votes": 13,
+          "author": "mallionaire",
+          "review_id": 3,
+          "created_at": "new Date(1610964545410)"
+        },
+        {
+          "body": "I didn't know dogs could play games",
+          "votes": 10,
+          "author": "philippaclaire9",
+          "review_id": 3,
+          "created_at": "new Date(1610964588110)"
+        }
+      ]
+    }
+  },
+  "POST /api/reviews/:review_id/comments": {
+    "description": "posts an new comment that are associated with the review that corresponds to review_id and serves the comment",
+    "queries": [],
+    "exampleResponse": {
+      "comment": [
+        {
+          "body": "I loved it!",
+          "votes": 5,
+          "author": "JimmyJohnson",
+          "review_id": 4,
+          "created_at": "new Date(161096447875410)"
+        }
+      ]
+    }
+  },
+  "GET /api/users": {
+    "description": "serves data for all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "bainesface",
+          "name": "sarah",
+          "avatar_url": "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4"
+        }
+      ]
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes a comment and confirms internal that comment is deleted. returns nothing to ui",
+    "queries": [],
+    "exampleResponse": "N/A"
   }
 }
